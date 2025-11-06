@@ -25,17 +25,82 @@ fig-cap-location: margin
 
 ```{r warning=FALSE, message=FALSE}
 
-# Load required libraries
-library(tidyverse)
+# First we load the libraries and data
+library(tidyverse)     # This lets you create plots with ggplot, manipulate data, etc.
+library(broom)         # This lets you convert regression models into nice tables
+library(modelsummary)  # This lets you combine multiple regression models into a single table
+
+# Load the data. 
+# It'd be a good idea to click on the "sat_gpa" object in the Environment panel
+# in RStudio to see what the data looks like after you load it.
+sat_gpa <- read_csv("input/sat_gpa.csv")
 
 
 
 ```
 
-# Step 1
+# Introduction
+
+Using SAT and GPA data from Dartmouth College (["Chance" Course](https://chance.dartmouth.edu/course/Syllabi/Princeton96/Class12.html)) , the goal is to conduct some statistical analysis on this data to answer the questions listed in the sections below:
+
+This is actually a form of People Analytics using Student Past Performance (e.g. SAT Grades) to Predict Future Performance.
+
+Let's say you are a university admissions officer and you are curious if SAT scores really do predict college performance. You’re also interested in other factors that could influence student performance.
+
+The data contains 6 variables:
+
+-   `sex`: The sex of the student (male or female; female is the base case)
+
+-   `sat_verbal`: The student’s *percentile* score in the verbal section of the SAT
+
+-   `sat_math`: The student’s *percentile* score in the math section of the SAT
+
+-   `sat_total`: `sat_verbal` + `sat_math`
+
+-   `gpa_hs`: The student’s GPA in high school at graduation
+
+-   `gpa_fy`: The student’s GPA at the end of their freshman year
+
+### Correlations
+
+#### **1. How well do SAT scores correlate with freshman GPA?**
+
+...
+
+#### **2. How well does high school GPA correlate with freshman GPA?**
+
+...
+
+#### **3. Is the correlation between SAT scores and freshman GPA stronger for men or for women?**
+
+....
+
+### **Predictive Models**
+
+#### **4. Do SAT scores predict freshman GPAs?**
+
+....
+
+#### **5. Does a certain type of SAT score have a larger effect on freshman GPAs?**
+
+...
+
+#### **6. Do high school GPAs predict freshman GPAs?**
+
+...
+
+#### **7. Which model best predicts freshman GPA? How do you know?**
 
 ...
 
 # Notes and References:
 
+-   <https://evalf20.classes.andrewheiss.com/example/regression/>
+
 -   <https://youtu.be/E-Zz5S5NOUo>
+
+-   <https://chance.dartmouth.edu/course/Syllabi/Princeton96/Class12.html>
+
+-   <https://chance.dartmouth.edu/course/Syllabi/Princeton96/princeton96.html>
+
+-   <https://chance.dartmouth.edu/>
