@@ -14,7 +14,7 @@ format: html
 html:
 code-fold: true
 code-summary: "Code"
-echo: false
+echo: true
 css: style.css
 toc: true
 toc-location: left
@@ -23,7 +23,7 @@ editor: visual
 fig-cap-location: margin
 ---
 
-```{r warning=FALSE, message=FALSE}
+```{r message=FALSE, warning=FALSE}
 
 # First we load the libraries and data
 library(tidyverse)     # This lets you create plots with ggplot, manipulate data, etc.
@@ -61,9 +61,24 @@ The data contains 6 variables:
 
 -   `gpa_fy`: The student’s GPA at the end of their freshman year
 
-### Correlations
+### Correlations (Exploratory Questions)
 
 #### **1. How well do SAT scores correlate with freshman GPA?**
+
+##### 1.1 Using the Correlation Function
+
+```{r}
+cor(sat_gpa$sat_total,sat_gpa$gpa_fy)
+```
+
+##### 1.2 Drawing a scatterplot of the relationship using ggplot
+
+```{r}
+ggplot(data = sat_gpa, mapping = aes(x=sat_total, y=gpa_fy)) +
+  geom_point() +
+  geom_smooth(method = "lm") + 
+  labs(x="Total SAT Score", y="Freshman GPA")
+```
 
 ...
 
@@ -75,7 +90,7 @@ The data contains 6 variables:
 
 ....
 
-### **Predictive Models**
+### Predictive Models
 
 #### **4. Do SAT scores predict freshman GPAs?**
 

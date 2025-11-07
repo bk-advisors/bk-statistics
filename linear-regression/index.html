@@ -22,6 +22,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -96,8 +131,8 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
   <ul class="collapse">
-  <li><a href="#correlations" id="toc-correlations" class="nav-link" data-scroll-target="#correlations">Correlations</a></li>
-  <li><a href="#predictive-models" id="toc-predictive-models" class="nav-link" data-scroll-target="#predictive-models"><strong>Predictive Models</strong></a></li>
+  <li><a href="#correlations-exploratory-questions" id="toc-correlations-exploratory-questions" class="nav-link" data-scroll-target="#correlations-exploratory-questions">Correlations (Exploratory Questions)</a></li>
+  <li><a href="#predictive-models" id="toc-predictive-models" class="nav-link" data-scroll-target="#predictive-models">Predictive Models</a></li>
   </ul></li>
   <li><a href="#notes-and-references" id="toc-notes-and-references" class="nav-link" data-scroll-target="#notes-and-references">Notes and References:</a></li>
   </ul>
@@ -111,6 +146,20 @@ ul.task-list li input[type="checkbox"] {
 
 
 
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First we load the libraries and data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)     <span class="co"># This lets you create plots with ggplot, manipulate data, etc.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)         <span class="co"># This lets you convert regression models into nice tables</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modelsummary)  <span class="co"># This lets you combine multiple regression models into a single table</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data. </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># It'd be a good idea to click on the "sat_gpa" object in the Environment panel</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># in RStudio to see what the data looks like after you load it.</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>sat_gpa <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"input/sat_gpa.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <p>Using SAT and GPA data from Dartmouth College (<a href="https://chance.dartmouth.edu/course/Syllabi/Princeton96/Class12.html">“Chance” Course</a>) , the goal is to conduct some statistical analysis on this data to answer the questions listed in the sections below:</p>
@@ -125,11 +174,45 @@ ul.task-list li input[type="checkbox"] {
 <li><p><code>gpa_hs</code>: The student’s GPA in high school at graduation</p></li>
 <li><p><code>gpa_fy</code>: The student’s GPA at the end of their freshman year</p></li>
 </ul>
-<section id="correlations" class="level3">
-<h3 class="anchored" data-anchor-id="correlations">Correlations</h3>
+<section id="correlations-exploratory-questions" class="level3">
+<h3 class="anchored" data-anchor-id="correlations-exploratory-questions">Correlations (Exploratory Questions)</h3>
 <section id="how-well-do-sat-scores-correlate-with-freshman-gpa" class="level4">
 <h4 class="anchored" data-anchor-id="how-well-do-sat-scores-correlate-with-freshman-gpa"><strong>1. How well do SAT scores correlate with freshman GPA?</strong></h4>
+<section id="using-the-correlation-function" class="level5">
+<h5 class="anchored" data-anchor-id="using-the-correlation-function">1.1 Using the Correlation Function</h5>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sat_gpa<span class="sc">$</span>sat_total,sat_gpa<span class="sc">$</span>gpa_fy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.460281</code></pre>
+</div>
+</div>
+</section>
+<section id="drawing-a-scatterplot-of-the-relationship-using-ggplot" class="level5">
+<h5 class="anchored" data-anchor-id="drawing-a-scatterplot-of-the-relationship-using-ggplot">1.2 Drawing a scatterplot of the relationship using ggplot</h5>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> sat_gpa, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>sat_total, <span class="at">y=</span>gpa_fy)) <span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Total SAT Score"</span>, <span class="at">y=</span><span class="st">"Freshman GPA"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>…</p>
+</section>
 </section>
 <section id="how-well-does-high-school-gpa-correlate-with-freshman-gpa" class="level4">
 <h4 class="anchored" data-anchor-id="how-well-does-high-school-gpa-correlate-with-freshman-gpa"><strong>2. How well does high school GPA correlate with freshman GPA?</strong></h4>
@@ -141,7 +224,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 </section>
 <section id="predictive-models" class="level3">
-<h3 class="anchored" data-anchor-id="predictive-models"><strong>Predictive Models</strong></h3>
+<h3 class="anchored" data-anchor-id="predictive-models">Predictive Models</h3>
 <section id="do-sat-scores-predict-freshman-gpas" class="level4">
 <h4 class="anchored" data-anchor-id="do-sat-scores-predict-freshman-gpas"><strong>4. Do SAT scores predict freshman GPAs?</strong></h4>
 <p>….</p>
