@@ -216,7 +216,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="how-well-does-high-school-gpa-correlate-with-freshman-gpa" class="level4">
 <h4 class="anchored" data-anchor-id="how-well-does-high-school-gpa-correlate-with-freshman-gpa"><strong>2. How well does high school GPA correlate with freshman GPA?</strong></h4>
+<section id="using-the-correlation-function-1" class="level5">
+<h5 class="anchored" data-anchor-id="using-the-correlation-function-1">2.1 Using the Correlation Function</h5>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sat_gpa<span class="sc">$</span>gpa_hs,sat_gpa<span class="sc">$</span>gpa_fy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5433535</code></pre>
+</div>
+</div>
+</section>
+<section id="drawing-a-scatterplot-of-the-relationship-using-ggplot-1" class="level5">
+<h5 class="anchored" data-anchor-id="drawing-a-scatterplot-of-the-relationship-using-ggplot-1">2.2 Drawing a scatterplot of the relationship using ggplot</h5>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> sat_gpa, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>gpa_hs, <span class="at">y=</span>gpa_fy)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Highschool GPA"</span>, <span class="at">y=</span><span class="st">"Freshman GPA"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>…</p>
+</section>
 </section>
 <section id="is-the-correlation-between-sat-scores-and-freshman-gpa-stronger-for-men-or-for-women" class="level4">
 <h4 class="anchored" data-anchor-id="is-the-correlation-between-sat-scores-and-freshman-gpa-stronger-for-men-or-for-women"><strong>3. Is the correlation between SAT scores and freshman GPA stronger for men or for women?</strong></h4>

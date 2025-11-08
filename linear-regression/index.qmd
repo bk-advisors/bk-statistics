@@ -84,6 +84,21 @@ ggplot(data = sat_gpa, mapping = aes(x=sat_total, y=gpa_fy)) +
 
 #### **2. How well does high school GPA correlate with freshman GPA?**
 
+##### 2.1 Using the Correlation Function
+
+```{r}
+cor(sat_gpa$gpa_hs,sat_gpa$gpa_fy)
+```
+
+##### 2.2 Drawing a scatterplot of the relationship using ggplot
+
+```{r}
+ggplot(data = sat_gpa, mapping = aes(x=gpa_hs, y=gpa_fy)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(x="Highschool GPA", y="Freshman GPA")
+```
+
 ...
 
 #### **3. Is the correlation between SAT scores and freshman GPA stronger for men or for women?**
