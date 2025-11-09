@@ -1,0 +1,107 @@
+---
+title: <span style="color:white">Bayesian Statistics Playbook</span>
+subtitle: "A reference guide based on the book Statistical Rethinking by Richard McElreath"
+
+author: 
+- name: "Matthew Kuch"
+  email: kuch.matthew@gmail.com
+date: 11/09/2025
+
+title-block-banner: true
+title-block-banner-color: "black"
+
+format: html
+html:
+code-fold: true
+code-summary: "Code"
+echo: true
+css: style.css
+toc: true
+toc-location: left
+number-sections: false
+editor: visual
+fig-cap-location: margin
+---
+
+```{r message=FALSE, warning=FALSE}
+
+# First we load the libraries and data
+library(tidyverse)     # This lets you create plots with ggplot, manipulate data, etc.
+
+# Load data
+
+
+
+```
+
+# Introduction
+
+## Overview
+
+Great book about doing statistical casual inference using Bayesian data analysis and other related tools.
+
+The author using interesting analogies and stories to explain complex ideas and concepts e.g. Golems (statistical models) and Garden of Forking Data (Counting possibilities)
+
+## The Tools
+
+The tools for "Golem engineering" proposed in the book are: 1. Bayesian Data analysis 2. Model comparison 3. Multilevel models 4. Graphical casual models (aka DAGs - Directed Acyclic Graphs)
+
+## The Recipe / Approach used - what he calls the "Bayesian Owl"
+
+1.  **Generate a Theoretical estimand (a testable hypothesis)** - what are we even trying to achieve/do in this study / what question are we trying to answer
+2.  **Create a scientific theoretical casual model** (starts out as a DAG and eventually needs to be a Generative casual model i.e. you can simulate data from the model)
+3.  **Use (1) and (2) to build statistical model(s)** (aka build your 'Golem(s)')
+4.  **Create simulated data for (2) to validate (3) to yield (1)** - This is like unit testing in software engineering or back-testing in Quantitative Finance
+5.  Analyze real world data
+
+...
+
+# Chapter 1 - The Golem of Prague
+
+An introductory chapter that uses the metaphor of "The Golem of Prague" to explain how statistical models can cause harm in the real world, hence we need to engineer them with best in class statistical practices and tools, to avoid mistakes.
+
+This builds on his talk about "Science as Amateur Software Engineering", available here: <https://youtu.be/8qzVV7eEiaI> - where he makes the case that too many research scientists treat their research like a hobby, and that actual professional standards are needed to avoid making research mistakes that create "Golems" that negatively impact the world.
+
+### Hypotheses are not models
+
+He especially makes the case for statistical rethinking (section 1.2) because he believes that classical statistical inference methods (as taught in school and university) focuses too much on significance testing a model's null-hypothesis, arguing that Karl Popper said that the goal of the scientific method is to find disconfirming evidence (i.e. falsification)
+
+![](assets/Statmodelstoday.png)
+
+He argues that statistical procedures should falsify hypotheses not models because "Hypotheses are not models"
+
+![](assets/StatsRethinking_Pg5.png)
+
+Evidence \> Theory \> Models
+
+![](assets/Evidence greater than Theory greater than Models.png)
+
+### Measurement matters
+
+He also makes the case the measurement error is very common in how statistics is practiced today because of the tendency to focus on falsifying models, and not the actual research hypothesis.
+
+![](assets/StatsRethinking_Pg8.png)
+
+### Why Bayesian Data Analysis ?
+
+Richard argues that it addresses many of the issues related to measurement error and hypotheses being treated as models. However, the Bayesian approach is overkill for most simple analysis (kind of like using a Chainsaw to cut a cake) . Bayesian is best for relatively larger-scale analysis in scientific research, where measurement error, missing data, latent variables are rampant.
+
+![](assets/BayesIsPracticalNOTPhilosophical.png)
+
+### Bayesian Data Analysis is simply...
+
+![](assets/BDA _simply.png)
+
+...
+
+# Chapter 2 - Small Worlds and Large Worlds
+
+...
+
+# Chapter 3 - Sampling the Imaginary
+
+...
+
+# Notes and References:
+
+-   ...
