@@ -147,8 +147,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First we load the libraries and data</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)     <span class="co"># This lets you create plots with ggplot, manipulate data, etc.</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)         <span class="co"># This lets you convert regression models into nice tables</span></span>
@@ -158,7 +156,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># It'd be a good idea to click on the "sat_gpa" object in the Environment panel</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># in RStudio to see what the data looks like after you load it.</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>sat_gpa <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"input/sat_gpa.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
@@ -181,10 +178,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="using-the-correlation-function" class="level5">
 <h5 class="anchored" data-anchor-id="using-the-correlation-function">1.1 Using the Correlation Function</h5>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sat_gpa<span class="sc">$</span>sat_total,sat_gpa<span class="sc">$</span>gpa_fy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.460281</code></pre>
 </div>
@@ -193,13 +187,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="drawing-a-scatterplot-of-the-relationship-using-ggplot" class="level5">
 <h5 class="anchored" data-anchor-id="drawing-a-scatterplot-of-the-relationship-using-ggplot">1.2 Drawing a scatterplot of the relationship using ggplot</h5>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> sat_gpa, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>sat_total, <span class="at">y=</span>gpa_fy)) <span class="sc">+</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span> </span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Total SAT Score"</span>, <span class="at">y=</span><span class="st">"Freshman GPA"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -219,10 +210,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="using-the-correlation-function-1" class="level5">
 <h5 class="anchored" data-anchor-id="using-the-correlation-function-1">2.1 Using the Correlation Function</h5>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sat_gpa<span class="sc">$</span>gpa_hs,sat_gpa<span class="sc">$</span>gpa_fy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.5433535</code></pre>
 </div>
@@ -231,13 +219,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="drawing-a-scatterplot-of-the-relationship-using-ggplot-1" class="level5">
 <h5 class="anchored" data-anchor-id="drawing-a-scatterplot-of-the-relationship-using-ggplot-1">2.2 Drawing a scatterplot of the relationship using ggplot</h5>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> sat_gpa, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>gpa_hs, <span class="at">y=</span>gpa_fy)) <span class="sc">+</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Highschool GPA"</span>, <span class="at">y=</span><span class="st">"Freshman GPA"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -252,8 +237,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>…</p>
 </section>
 </section>
-<section id="is-the-correlation-between-sat-scores-and-freshman-gpa-stronger-for-men-or-for-women" class="level4">
-<h4 class="anchored" data-anchor-id="is-the-correlation-between-sat-scores-and-freshman-gpa-stronger-for-men-or-for-women"><strong>3. Is the correlation between SAT scores and freshman GPA stronger for men or for women?</strong></h4>
+<section id="a.-is-the-correlation-between-sat-scores-and-freshman-gpa-stronger-for-men-or-for-women" class="level4">
+<h4 class="anchored" data-anchor-id="a.-is-the-correlation-between-sat-scores-and-freshman-gpa-stronger-for-men-or-for-women"><strong>3A. Is the correlation between SAT scores and freshman GPA stronger for men or for women?</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sat_gpa <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">correlation =</span> <span class="fu">cor</span>(sat_total,gpa_fy))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  sex    correlation
+  &lt;chr&gt;        &lt;dbl&gt;
+1 Female       0.493
+2 Male         0.481</code></pre>
+</div>
+</div>
+</section>
+<section id="b.-is-the-correlation-between-highschool-gpa-and-freshman-gpa-stronger-for-men-or-for-women" class="level4">
+<h4 class="anchored" data-anchor-id="b.-is-the-correlation-between-highschool-gpa-and-freshman-gpa-stronger-for-men-or-for-women"><strong>3B. Is the correlation between HighSchool GPA and freshman GPA stronger for men or for women?</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sat_gpa <span class="sc">|&gt;</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">|&gt;</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">correlation =</span> <span class="fu">cor</span>(gpa_hs,gpa_fy))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  sex    correlation
+  &lt;chr&gt;        &lt;dbl&gt;
+1 Female       0.597
+2 Male         0.483</code></pre>
+</div>
+</div>
 <p>….</p>
 </section>
 </section>

@@ -12,7 +12,7 @@ title-block-banner-color: "black"
 
 format: html
 html:
-code-fold: true
+code-fold: false
 code-summary: "Code"
 echo: true
 css: style.css
@@ -101,7 +101,21 @@ ggplot(data = sat_gpa, mapping = aes(x=gpa_hs, y=gpa_fy)) +
 
 ...
 
-#### **3. Is the correlation between SAT scores and freshman GPA stronger for men or for women?**
+#### **3A. Is the correlation between SAT scores and freshman GPA stronger for men or for women?**
+
+```{r}
+sat_gpa |> 
+  group_by(sex) |> 
+  summarise(correlation = cor(sat_total,gpa_fy))
+```
+
+#### **3B. Is the correlation between HighSchool GPA and freshman GPA stronger for men or for women?**
+
+```{r}
+sat_gpa |> 
+  group_by(sex) |> 
+  summarise(correlation = cor(gpa_hs,gpa_fy))
+```
 
 ....
 
