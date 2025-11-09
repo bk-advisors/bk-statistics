@@ -27,6 +27,8 @@ fig-cap-location: margin
 
 # First we load the libraries and data
 library(tidyverse)     # This lets you create plots with ggplot, manipulate data, etc.
+library(igraph)
+library(ggraph)
 
 # Load data
 
@@ -96,6 +98,166 @@ Richard argues that it addresses many of the issues related to measurement error
 
 # Chapter 2 - Small Worlds and Large Worlds
 
+This chapter starts with a nice historical analogy about how [Christoper Columbus](https://theoatmeal.com/comics/columbus_day)' belief (prior) about the world was incorrect, which caused him to undertake a journey that changed history and resulted in the creation of America, as we know it today.
+
+Columbus assumed/believed that the earth was only 30,000 kms round (the circumference), hence he thought we would have enough food rations and resources to sail to India from Europe.
+
+The reality is that the world is 40,000km round, hence if he didnt find the land-mass of America on the way to India, he would have died - which many argue would have saved millions of native Americans. But unfortunately his mistake wasn't costly and he "discovered" America.
+
+He had a small world view of the world, which was 10,000 kms less than the real and larger world. Columbus made a prediction based upon his view that the world was small. His story provides a clear contrast between the models we use and reality. The map versus the terrain.
+
+In **Chapter 2 of the book we begin to build Bayesian models**. The way that Bayesian models learn from evidence is arguably optimal in the small world. When their assumptions approximate reality, they also perform well in the large world.
+
+## 2.1 The garden of forking data - 4 marbles example
+
+To better understand the thinking around building bayesian models, the 1st example looks at guessing the color of marbles inside a bag, based on evidence (randomly drawing 1 marble at at time, with replacement).
+
+### 2.1.1 Counting the possibilities
+
+**Situation:** Imagine you have a small **bag with 4 marbles**.\
+Each marble can be either **blue** ⚪ or **white** 🔵.
+
+**Complication:** But you don’t know how many of each color are inside.
+
+All you can do is:\
+👉 pull out a marble (look at it), note the color, and then put it back.
+
+That’s it.
+
+**Question: What could be inside the bag?**
+
+[**Resolution / Answer / Approach**]{.underline}
+
+There are **5 possible worlds** (different “forks” in our garden):
+
+![](assets/possible_worlds_4_marbles.png)
+
+### You start drawing marbles
+
+Let’s say you draw **one marble** and it’s **blue**.
+
+That’s your first observation — your first “data point.”\
+Now your brain starts guessing:
+
+> “Hmm… if there was only 1 blue marble in the bag,\
+> the chance of getting blue was 1 in 4.”
+
+>  “If there were 3 blue marbles, that would be much more likely.”
+
+So you start to **update your belief** about what’s inside the bag.
+
+### Every new draw creates a fork
+
+If you draw again and get another **blue**,\
+your belief that “the bag has more blue marbles” gets stronger.
+
+If you then draw a **white**, it bends your belief the other way.
+
+Each draw sends your understanding down a new **branch** in the garden —\
+different outcomes, different paths of belief.
+
+That’s what McElreath means by *the garden of forking data*:
+
+> “The data we see could have been different,\
+> and each difference would lead us down a different reasoning path.”
+
+### Let’s build the garden of forking marbles in R
+
+```{r}
+
+# Number of draws
+n_draws <- 3
+
+# Generate all possible outcomes (paths) - each draw can be 0 (white) or 1 (blue)
+paths <- expand.grid(replicate(n_draws, c("W", "B"), simplify = FALSE))
+colnames(paths) <- paste0("draw", 1:n_draws)
+
+# Convert each combination into a string (e.g., "W-B-B")
+paths <- paths %>% 
+  mutate(path = apply(., 1, paste, collapse = "-")) %>% 
+  mutate(id = row_number())
+
+# Create edges for the tree structure
+edges <- tibble()
+
+# Add edges from root to first draw
+for (first_draw in c("W", "B")) {
+  edges <- bind_rows(edges, tibble(from = "Start", to = first_draw))
+}
+
+# Add edges for subsequent draws
+for (i in 2:n_draws) {
+  # Get all possible prefixes of length i-1
+  prefixes <- paths %>%
+    select(1:(i-1)) %>%
+    apply(1, paste, collapse = "-") %>%
+    unique()
+  
+  for (prefix in prefixes) {
+    # Add edges to both possible next draws
+    edges <- bind_rows(edges, 
+                      tibble(from = prefix, to = paste(prefix, "W", sep = "-")),
+                      tibble(from = prefix, to = paste(prefix, "B", sep = "-")))
+  }
+}
+
+# Create graph - make sure we have all vertices
+all_nodes <- unique(c(edges$from, edges$to))
+g <- graph_from_data_frame(edges, vertices = data.frame(name = all_nodes), directed = TRUE)
+
+# Add node attributes for better visualization
+V(g)$draw_level <- sapply(V(g)$name, function(x) {
+  if (x == "Start") return(0)
+  length(strsplit(x, "-")[[1]])
+})
+
+V(g)$color <- sapply(V(g)$name, function(x) {
+  if (x == "Start") return("gray")
+  draws <- strsplit(x, "-")[[1]]
+  last_draw <- tail(draws, 1)
+  if (last_draw == "B") "lightblue" else "white"
+})
+
+V(g)$border_color <- sapply(V(g)$name, function(x) {
+  if (x == "Start") return("black")
+  draws <- strsplit(x, "-")[[1]]
+  last_draw <- tail(draws, 1)
+  if (last_draw == "B") "darkblue" else "darkgray"
+})
+
+# Plot the "Garden of Forking Data"
+ggraph(g, layout = "tree") +
+  geom_edge_link(arrow = arrow(type = "closed", length = unit(2, "mm")), 
+                 edge_color = "gray", edge_width = 0.7) +
+  geom_node_point(size = 8, aes(color = I(color)), stroke = 1.5) +
+  geom_node_text(aes(label = name), size = 3, fontface = "bold") +
+  theme_void() +
+  labs(title = "🌿 The Garden of Forking Data (3 Marble Draws)",
+       subtitle = "Each branch shows a different sequence of marble colors (W=White, B=Blue)",
+       caption = "Start → First draw → Second draw → Third draw") +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    plot.caption = element_text(hjust = 0.5, color = "gray40")
+  )
+```
+
+..
+
+...
+
+## 2.2 Building a model
+
+...
+
+## 2.3 Components of the model
+
+...
+
+## 2.4 Making the model go
+
+...
+
 ...
 
 # Chapter 3 - Sampling the Imaginary
@@ -104,4 +266,8 @@ Richard argues that it addresses many of the issues related to measurement error
 
 # Notes and References:
 
--   ...
+-   <https://github.com/rmcelreath/stat_rethinking_2023>
+
+-   <https://bookdown.org/content/4857/>
+
+-   <https://psmits.github.io/paleo_book/introduction-to-bayesian-data-analysis.html>
