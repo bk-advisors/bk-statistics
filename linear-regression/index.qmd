@@ -117,13 +117,59 @@ sat_gpa |>
   summarise(correlation = cor(gpa_hs,gpa_fy))
 ```
 
+```{r}
+ggplot(data = sat_gpa, mapping = aes(x=gpa_hs, y=gpa_fy, color=sex)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(x="Highschool GPA", y="Freshman GPA")
+```
+
 ....
 
 ### Predictive Models
 
 #### **4. Do SAT scores predict freshman GPAs?**
 
-....
+A reminder of the formula we'll be replicating when doing linear regression i.e. Y = mX + b, where:
+
+-   Y - the outcome variable
+
+-   X - in the explanatory variable
+
+-   m - is the slope (rise over run)
+
+-   b - is the Y-intercept
+
+For this particular case, it can be represented by the formula below:
+
+![](assets/linear-regression-equation.png){fig-align="center"}
+
+-   Where the "E" looking symbol at the end represents the standard error
+
+The R-code to implement this, is below:
+
+```{r}
+model_sat_gpa <- lm(gpa_fy ~ sat_total, data = sat_gpa) # You can read this as Freshman gpa "is explained by" / "~" SAT scores
+
+# Look at the model results and include confidence intervals for the coefficients
+tidy(model_sat_gpa, conf.int = TRUE)
+```
+
+Here’s what these coefficients mean:
+
+-   The Y-intercept (Beta-0) is 0.002, which means that the average freshman GPA will be 0.002 when the total SAT percentile score is 0. This is a pretty nonsensical number (nobody has a score that low), so we can ignore it.
+
+-   The slope of `sat_total` (Beta-1) is 0.024, which means that a 1 percentile increase in SAT score is associated with a 0.024 point increase in GPA, on average.
+
+We can look at the summary table of the regression to check the R-squared (R\^2) :
+
+```{r}
+glance(model_sat_gpa)
+```
+
+The R-squared here is 0.212, which means that SAT scores explain 21% of the variation in freshman GPA. It’s not a fantastic model, but it explains some stuff.
+
+...
 
 #### **5. Does a certain type of SAT score have a larger effect on freshman GPAs?**
 
