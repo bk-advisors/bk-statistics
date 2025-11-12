@@ -159,7 +159,7 @@ Here’s what these coefficients mean:
 
 -   The Y-intercept (Beta-0) is 0.002, which means that the average freshman GPA will be 0.002 when the total SAT percentile score is 0. This is a pretty nonsensical number (nobody has a score that low), so we can ignore it.
 
--   The slope of `sat_total` (Beta-1) is 0.024, which means that a 1 percentile increase in SAT score is associated with a 0.024 point increase in GPA, on average.
+-   The slope of `sat_total` (Beta-1) is 0.024, which means that a 1 percentile increase in SAT score is associated with a 0.024 point increase in GPA, on average. Rise over Run i.e. 1% rise, 0.024 run.
 
 We can look at the summary table of the regression to check the R-squared (R\^2) :
 
@@ -172,6 +172,40 @@ The R-squared here is 0.212, which means that SAT scores explain 21% of the vari
 ...
 
 #### **5. Does a certain type of SAT score have a larger effect on freshman GPAs?**
+
+The 2 types of SAT scores are:
+
+-   SAT Verbal, and
+
+-   SAT Math
+
+This particular case, can be represented by the formula below:
+
+![](assets/multi-variate-linear-regression.png)
+
+Implementing this in R:
+
+```{r}
+model_sat_gpa_types <- lm(gpa_fy ~ sat_verbal + sat_math, data = sat_gpa)
+
+tidy(model_sat_gpa_types, conf.int = TRUE)
+```
+
+-   Again, the intercept is meaningless since no student has a zero on both the verbal and the math test.
+
+-   The slope for `sat_verbal` (or Beta-1) is 0.025, so a one percentile point increase in the verbal SAT is associated with a 0.025 point increase in GPA, on average, controlling for math scores
+
+-   Meanwhile, a one percentile point increase in the math SAT () is associated with a 0.022 point increase in GPA, on average, controlling for verbal scores.
+
+These are essentially the same, so at first glance, it doesn’t seem like the type of test has substantial bearing on college GPAs.
+
+**Checking the Adjusted R-squared:**
+
+```{r}
+glance(model_sat_gpa_types)
+```
+
+The adjusted R-squared (which we need to look at because we’re using more than one explanatory variable) is 0.211, which means that this model explains 21% of the variation in college GPA. Like before, this isn’t great, but it tells us a little bit about the importance of SAT scores.
 
 ...
 

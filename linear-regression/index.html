@@ -322,7 +322,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Here’s what these coefficients mean:</p>
 <ul>
 <li><p>The Y-intercept (Beta-0) is 0.002, which means that the average freshman GPA will be 0.002 when the total SAT percentile score is 0. This is a pretty nonsensical number (nobody has a score that low), so we can ignore it.</p></li>
-<li><p>The slope of <code>sat_total</code> (Beta-1) is 0.024, which means that a 1 percentile increase in SAT score is associated with a 0.024 point increase in GPA, on average.</p></li>
+<li><p>The slope of <code>sat_total</code> (Beta-1) is 0.024, which means that a 1 percentile increase in SAT score is associated with a 0.024 point increase in GPA, on average. Rise over Run i.e.&nbsp;1% rise, 0.024 run.</p></li>
 </ul>
 <p>We can look at the summary table of the regression to check the R-squared (R^2) :</p>
 <div class="cell">
@@ -340,6 +340,45 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="does-a-certain-type-of-sat-score-have-a-larger-effect-on-freshman-gpas" class="level4">
 <h4 class="anchored" data-anchor-id="does-a-certain-type-of-sat-score-have-a-larger-effect-on-freshman-gpas"><strong>5. Does a certain type of SAT score have a larger effect on freshman GPAs?</strong></h4>
+<p>The 2 types of SAT scores are:</p>
+<ul>
+<li><p>SAT Verbal, and</p></li>
+<li><p>SAT Math</p></li>
+</ul>
+<p>This particular case, can be represented by the formula below:</p>
+<p><img src="assets/multi-variate-linear-regression.png" class="img-fluid"></p>
+<p>Implementing this in R:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>model_sat_gpa_types <span class="ot">&lt;-</span> <span class="fu">lm</span>(gpa_fy <span class="sc">~</span> sat_verbal <span class="sc">+</span> sat_math, <span class="at">data =</span> sat_gpa)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_sat_gpa_types, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 7
+  term        estimate std.error statistic  p.value conf.low conf.high
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)  0.00737   0.152      0.0484 9.61e- 1  -0.291     0.306 
+2 sat_verbal   0.0254    0.00286    8.88   3.07e-18   0.0198    0.0310
+3 sat_math     0.0224    0.00279    8.04   2.58e-15   0.0169    0.0279</code></pre>
+</div>
+</div>
+<ul>
+<li><p>Again, the intercept is meaningless since no student has a zero on both the verbal and the math test.</p></li>
+<li><p>The slope for&nbsp;<code>sat_verbal</code>&nbsp;(or Beta-1) is 0.025, so a one percentile point increase in the verbal SAT is associated with a 0.025 point increase in GPA, on average, controlling for math scores</p></li>
+<li><p>Meanwhile, a one percentile point increase in the math SAT () is associated with a 0.022 point increase in GPA, on average, controlling for verbal scores.</p></li>
+</ul>
+<p>These are essentially the same, so at first glance, it doesn’t seem like the type of test has substantial bearing on college GPAs.</p>
+<p><strong>Checking the Adjusted R-squared:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glance</span>(model_sat_gpa_types)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 12
+  r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     0.212         0.211 0.658      134. 2.36e-52     2  -999. 2006. 2026.
+# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>The adjusted R-squared (which we need to look at because we’re using more than one explanatory variable) is 0.211, which means that this model explains 21% of the variation in college GPA. Like before, this isn’t great, but it tells us a little bit about the importance of SAT scores.</p>
 <p>…</p>
 </section>
 <section id="do-high-school-gpas-predict-freshman-gpas" class="level4">
