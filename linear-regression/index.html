@@ -381,12 +381,356 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The adjusted R-squared (which we need to look at because we’re using more than one explanatory variable) is 0.211, which means that this model explains 21% of the variation in college GPA. Like before, this isn’t great, but it tells us a little bit about the importance of SAT scores.</p>
 <p>…</p>
 </section>
-<section id="do-high-school-gpas-predict-freshman-gpas" class="level4">
-<h4 class="anchored" data-anchor-id="do-high-school-gpas-predict-freshman-gpas"><strong>6. Do high school GPAs predict freshman GPAs?</strong></h4>
+<section id="a.-do-high-school-gpas-predict-freshman-gpas" class="level4">
+<h4 class="anchored" data-anchor-id="a.-do-high-school-gpas-predict-freshman-gpas"><strong>6A. Do high school GPAs predict freshman GPAs?</strong></h4>
+<p>Similar to the above in approach, but now the formula is:</p>
+<p><img src="assets/linear-regression-equation-hs-fy-gpa.png" class="img-fluid"></p>
+<p>And implementing the model in R is as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>model_sat_gpa_hs <span class="ot">&lt;-</span> <span class="fu">lm</span>(gpa_fy <span class="sc">~</span> gpa_hs, <span class="at">data =</span> sat_gpa)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_sat_gpa_hs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)   0.0913    0.118      0.775 4.39e- 1
+2 gpa_hs        0.743     0.0363    20.4   6.93e-78</code></pre>
+</div>
+</div>
+<ul>
+<li><p>The intercept here (Beta-0) is 0.091, which means that a student with a high school GPA of zero would have a predicted freshman GPA of 0.091, on average. This is nonsensical, so we can ignore it.</p></li>
+<li><p>The slope for&nbsp;<code>gpa_hs</code>&nbsp;(Beta-1), on the other hand, is helpful. For every 1 point increase in GPA (i.e.&nbsp;moving from 2.0 to 3.0, or 3.0 to 4.0), there’s an associated increase in college GPA of 0.743 points, on average.</p></li>
+</ul>
+<p><strong>Checking the R-squared, for this model:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glance</span>(model_sat_gpa_hs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 12
+  r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     0.295         0.295 0.622      418. 6.93e-78     1  -943. 1893. 1908.
+# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+</div>
+</div>
+<ul>
+<li>The R-squared value is 0.295, which means that nearly 30% of the variation in college GPA can be explained by high school GPA. Neat.</li>
+</ul>
+</section>
+<section id="b.-college-gpa-sat-sex" class="level4">
+<h4 class="anchored" data-anchor-id="b.-college-gpa-sat-sex">6B. College GPA ~ SAT + sex</h4>
+<p>Next, we can see how both SAT scores and sex affect variation in college GPA with the following model:</p>
+<p><img src="assets/linear-regression-equation-gpa-sat-sex.png" class="img-fluid"></p>
+<p>Implementation in R:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>model_sat_sex <span class="ot">&lt;-</span> <span class="fu">lm</span>(gpa_fy <span class="sc">~</span> sat_total <span class="sc">+</span> sex, <span class="at">data =</span> sat_gpa)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_sat_sex, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 7
+  term        estimate std.error statistic  p.value conf.low conf.high
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)  -0.0269   0.149      -0.181 8.57e- 1  -0.319     0.265 
+2 sat_total     0.0255   0.00145    17.6   1.14e-60   0.0227    0.0284
+3 sexMale      -0.274    0.0414     -6.62  6.05e-11  -0.355    -0.193 </code></pre>
+</div>
+</div>
+<ul>
+<li><p>Here, stuff gets interesting. The intercept (Beta-0) is once again nonsensical—females with a 0 score on their SAT would have a -0.027 college GPA on average.</p></li>
+<li><p>There’s a positive effect with our Beta-1 (or&nbsp;<code>sat_total</code>), since controlling for sex, a one percentile point increase in SAT scores is associated with a 0.026 point increase in freshman GPA, on average.</p></li>
+<li><p>If we control for SAT scores, males see an average drop of 0.274 points (Beta-2) in their college GPAs.</p></li>
+<li><p>The combination of these two variables, however, doesn’t boost the model’s explanatory power that much.</p></li>
+</ul>
+<p><strong>Adjusted R-squared:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glance</span>(model_sat_sex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 12
+  r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     0.245         0.243 0.644      162. 1.44e-61     2  -978. 1964. 1983.
+# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+</div>
+</div>
+<ul>
+<li>The adjusted R-squared (which we must look at because we’re using more than one explanatory variable) is 0.243, meaning that the model explains a little over 24% of the variation in college GPAs.</li>
+</ul>
+</section>
+<section id="c.-college-gpa-sat-high-school-gpa-sex" class="level4">
+<h4 class="anchored" data-anchor-id="c.-college-gpa-sat-high-school-gpa-sex"><strong>6C. College GPA ~ SAT + high school GPA + sex</strong></h4>
+<p>Finally we can see what the effect of SAT scores, high school GPA, and sex is on college GPAs all at the same time, using the following model:</p>
+<p><img src="assets/linear-regression-equation-gpa-sat-hs-gpa-sex.png" class="img-fluid"></p>
+<p>Implementation in R:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>model_sat_hs_sex <span class="ot">&lt;-</span> <span class="fu">lm</span>(gpa_fy <span class="sc">~</span> sat_total <span class="sc">+</span> gpa_hs <span class="sc">+</span> sex, <span class="at">data =</span> sat_gpa)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_sat_hs_sex, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 7
+  term        estimate std.error statistic  p.value conf.low conf.high
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)  -0.836    0.148       -5.63 2.35e- 8  -1.13     -0.544 
+2 sat_total     0.0158   0.00150     10.5  9.72e-25   0.0129    0.0188
+3 gpa_hs        0.545    0.0394      13.8  6.61e-40   0.467     0.622 
+4 sexMale      -0.143    0.0391      -3.66 2.66e- 4  -0.220    -0.0664</code></pre>
+</div>
+</div>
+<ul>
+<li><p>Yet again, the intercept (Beta-0) can be safely ignored. Here it means that a female with a 0.0 high school GPA and an SAT score of 0 would have a college GPA of -0.84, on average. That’s pretty impossible.</p></li>
+<li><p>The Beta-1 coefficient for <code>sat_total</code> indicates that taking into account high school GPA and sex, a one percentile point increase in a student’s SAT score is associated with a 0.016 point increase in their college GPA, on average.</p></li>
+<li><p>Controlling for SAT scores and sex, a one point increase in high school GPA is associated with a 0.545 point (this is Beta-2) increase in college GPA, on average. This coefficient is lower than the 0.74 point coefficient we found previously. That’s because SAT scores and sex soaked up some of high school GPA’s explanatory power.</p></li>
+<li><p>Taking SAT scores and high school GPAs into account, males have a 0.143 point lower GPA in college, on average (this is Beta-3 )</p></li>
+</ul>
+<p><strong>Adjusted R-squared:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glance</span>(model_sat_hs_sex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 12
+  r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     0.367         0.365 0.590      192. 2.67e-98     3  -890. 1790. 1815.
+# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;</code></pre>
+</div>
+</div>
+<ul>
+<li>As always, the adjusted&nbsp;&nbsp;shows us how well the model fits overall (again, we have to look at the adjusted&nbsp;&nbsp;because we have more than one explanatory variable). In this case, the model explains 36.5% of the variation in college GPA, which is higher than any of the previous models (but not phenomenal, in the end).</li>
+</ul>
 <p>…</p>
 </section>
 <section id="which-model-best-predicts-freshman-gpa-how-do-you-know" class="level4">
 <h4 class="anchored" data-anchor-id="which-model-best-predicts-freshman-gpa-how-do-you-know"><strong>7. Which model best predicts freshman GPA? How do you know?</strong></h4>
+<p>As you’ve learned in previous stats classes, adjusted&nbsp;&nbsp;generally shows the strength of a model’s fit, or how well the model will predict future values of the outcome variable. If we compare the adjusted&nbsp;&nbsp;for each of the models, we see that the “best” model is the last one.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The modelsummary() function takes a bunch of different regression models and</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># puts them in a neat side-by-side table. In a normal report or analysis, you'd</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># include all of these once instead of going one by one like we did above.</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(<span class="fu">list</span>(model_sat_gpa, model_sat_gpa_types, model_sat_gpa_hs, </span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>                  model_sat_sex, model_sat_hs_sex))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<!-- preamble start -->
+
+    <script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script>
+
+    <script>
+      // Create table-specific functions using external factory
+      const tableFns_jeqda7vgv8em3gngkbm2 = TinyTable.createTableFunctions("tinytable_jeqda7vgv8em3gngkbm2");
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '20', j: 2 }, { i: '20', j: 3 }, { i: '20', j: 4 }, { i: '20', j: 5 }, { i: '20', j: 6 } ], css_id: 'tinytable_css_xzpwffswm97ca129qi4s',}, 
+          { positions: [ { i: '12', j: 2 }, { i: '12', j: 3 }, { i: '12', j: 4 }, { i: '12', j: 5 }, { i: '12', j: 6 } ], css_id: 'tinytable_css_g7sqtdblz7g7iqd12czw',}, 
+          { positions: [ { i: '1', j: 2 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '4', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '7', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '10', j: 2 }, { i: '11', j: 2 }, { i: '13', j: 2 }, { i: '14', j: 2 }, { i: '15', j: 2 }, { i: '16', j: 2 }, { i: '17', j: 2 }, { i: '18', j: 2 }, { i: '19', j: 2 }, { i: '1', j: 3 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '4', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '11', j: 3 }, { i: '13', j: 3 }, { i: '14', j: 3 }, { i: '15', j: 3 }, { i: '16', j: 3 }, { i: '17', j: 3 }, { i: '18', j: 3 }, { i: '19', j: 3 }, { i: '1', j: 4 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '4', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '11', j: 4 }, { i: '13', j: 4 }, { i: '14', j: 4 }, { i: '15', j: 4 }, { i: '16', j: 4 }, { i: '17', j: 4 }, { i: '18', j: 4 }, { i: '19', j: 4 }, { i: '1', j: 5 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '4', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '7', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '10', j: 5 }, { i: '11', j: 5 }, { i: '13', j: 5 }, { i: '14', j: 5 }, { i: '15', j: 5 }, { i: '16', j: 5 }, { i: '17', j: 5 }, { i: '18', j: 5 }, { i: '19', j: 5 }, { i: '1', j: 6 }, { i: '2', j: 6 }, { i: '3', j: 6 }, { i: '4', j: 6 }, { i: '5', j: 6 }, { i: '6', j: 6 }, { i: '7', j: 6 }, { i: '8', j: 6 }, { i: '9', j: 6 }, { i: '10', j: 6 }, { i: '11', j: 6 }, { i: '13', j: 6 }, { i: '14', j: 6 }, { i: '15', j: 6 }, { i: '16', j: 6 }, { i: '17', j: 6 }, { i: '18', j: 6 }, { i: '19', j: 6 } ], css_id: 'tinytable_css_dr8q24imuq9mpsvocxx1',}, 
+          { positions: [ { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 }, { i: '0', j: 6 } ], css_id: 'tinytable_css_2g4vqr2mwdd5us0f65zv',}, 
+          { positions: [ { i: '20', j: 1 } ], css_id: 'tinytable_css_kqexg7d0injo8jpx496r',}, 
+          { positions: [ { i: '12', j: 1 } ], css_id: 'tinytable_css_rc4ibkc36yeluwj2mg85',}, 
+          { positions: [ { i: '1', j: 1 }, { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '4', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '7', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '10', j: 1 }, { i: '11', j: 1 }, { i: '13', j: 1 }, { i: '14', j: 1 }, { i: '15', j: 1 }, { i: '16', j: 1 }, { i: '17', j: 1 }, { i: '18', j: 1 }, { i: '19', j: 1 } ], css_id: 'tinytable_css_i18k3zrvlq9wh04uea4p',}, 
+          { positions: [ { i: '0', j: 1 } ], css_id: 'tinytable_css_a5g03kd1ech66ekx71o9',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  tableFns_jeqda7vgv8em3gngkbm2.styleCell(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+    <style>
+    /* tinytable css entries after */
+    #tinytable_jeqda7vgv8em3gngkbm2 td.tinytable_css_xzpwffswm97ca129qi4s, #tinytable_jeqda7vgv8em3gngkbm2 th.tinytable_css_xzpwffswm97ca129qi4s {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_jeqda7vgv8em3gngkbm2 td.tinytable_css_g7sqtdblz7g7iqd12czw, #tinytable_jeqda7vgv8em3gngkbm2 th.tinytable_css_g7sqtdblz7g7iqd12czw {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_jeqda7vgv8em3gngkbm2 td.tinytable_css_dr8q24imuq9mpsvocxx1, #tinytable_jeqda7vgv8em3gngkbm2 th.tinytable_css_dr8q24imuq9mpsvocxx1 { text-align: center }
+    #tinytable_jeqda7vgv8em3gngkbm2 td.tinytable_css_2g4vqr2mwdd5us0f65zv, #tinytable_jeqda7vgv8em3gngkbm2 th.tinytable_css_2g4vqr2mwdd5us0f65zv {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_jeqda7vgv8em3gngkbm2 td.tinytable_css_kqexg7d0injo8jpx496r, #tinytable_jeqda7vgv8em3gngkbm2 th.tinytable_css_kqexg7d0injo8jpx496r {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
+    #tinytable_jeqda7vgv8em3gngkbm2 td.tinytable_css_rc4ibkc36yeluwj2mg85, #tinytable_jeqda7vgv8em3gngkbm2 th.tinytable_css_rc4ibkc36yeluwj2mg85 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
+    #tinytable_jeqda7vgv8em3gngkbm2 td.tinytable_css_i18k3zrvlq9wh04uea4p, #tinytable_jeqda7vgv8em3gngkbm2 th.tinytable_css_i18k3zrvlq9wh04uea4p { text-align: left }
+    #tinytable_jeqda7vgv8em3gngkbm2 td.tinytable_css_a5g03kd1ech66ekx71o9, #tinytable_jeqda7vgv8em3gngkbm2 th.tinytable_css_a5g03kd1ech66ekx71o9 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: black; --line-color-left: black; --line-color-right: black; --line-color-top: black; --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
+    </style>
+    <div class="container">
+      <table class="tinytable" id="tinytable_jeqda7vgv8em3gngkbm2" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+        
+        <thead>
+              <tr>
+                <th scope="col" data-row="0" data-col="1"> </th>
+                <th scope="col" data-row="0" data-col="2">(1)</th>
+                <th scope="col" data-row="0" data-col="3">(2)</th>
+                <th scope="col" data-row="0" data-col="4">(3)</th>
+                <th scope="col" data-row="0" data-col="5">(4)</th>
+                <th scope="col" data-row="0" data-col="6">(5)</th>
+              </tr>
+        </thead>
+        
+        <tbody>
+                <tr>
+                  <td data-row="1" data-col="1">(Intercept)</td>
+                  <td data-row="1" data-col="2">0.002</td>
+                  <td data-row="1" data-col="3">0.007</td>
+                  <td data-row="1" data-col="4">0.091</td>
+                  <td data-row="1" data-col="5">-0.027</td>
+                  <td data-row="1" data-col="6">-0.836</td>
+                </tr>
+                <tr>
+                  <td data-row="2" data-col="1"></td>
+                  <td data-row="2" data-col="2">(0.152)</td>
+                  <td data-row="2" data-col="3">(0.152)</td>
+                  <td data-row="2" data-col="4">(0.118)</td>
+                  <td data-row="2" data-col="5">(0.149)</td>
+                  <td data-row="2" data-col="6">(0.148)</td>
+                </tr>
+                <tr>
+                  <td data-row="3" data-col="1">sat_total</td>
+                  <td data-row="3" data-col="2">0.024</td>
+                  <td data-row="3" data-col="3"></td>
+                  <td data-row="3" data-col="4"></td>
+                  <td data-row="3" data-col="5">0.026</td>
+                  <td data-row="3" data-col="6">0.016</td>
+                </tr>
+                <tr>
+                  <td data-row="4" data-col="1"></td>
+                  <td data-row="4" data-col="2">(0.001)</td>
+                  <td data-row="4" data-col="3"></td>
+                  <td data-row="4" data-col="4"></td>
+                  <td data-row="4" data-col="5">(0.001)</td>
+                  <td data-row="4" data-col="6">(0.002)</td>
+                </tr>
+                <tr>
+                  <td data-row="5" data-col="1">sat_verbal</td>
+                  <td data-row="5" data-col="2"></td>
+                  <td data-row="5" data-col="3">0.025</td>
+                  <td data-row="5" data-col="4"></td>
+                  <td data-row="5" data-col="5"></td>
+                  <td data-row="5" data-col="6"></td>
+                </tr>
+                <tr>
+                  <td data-row="6" data-col="1"></td>
+                  <td data-row="6" data-col="2"></td>
+                  <td data-row="6" data-col="3">(0.003)</td>
+                  <td data-row="6" data-col="4"></td>
+                  <td data-row="6" data-col="5"></td>
+                  <td data-row="6" data-col="6"></td>
+                </tr>
+                <tr>
+                  <td data-row="7" data-col="1">sat_math</td>
+                  <td data-row="7" data-col="2"></td>
+                  <td data-row="7" data-col="3">0.022</td>
+                  <td data-row="7" data-col="4"></td>
+                  <td data-row="7" data-col="5"></td>
+                  <td data-row="7" data-col="6"></td>
+                </tr>
+                <tr>
+                  <td data-row="8" data-col="1"></td>
+                  <td data-row="8" data-col="2"></td>
+                  <td data-row="8" data-col="3">(0.003)</td>
+                  <td data-row="8" data-col="4"></td>
+                  <td data-row="8" data-col="5"></td>
+                  <td data-row="8" data-col="6"></td>
+                </tr>
+                <tr>
+                  <td data-row="9" data-col="1">gpa_hs</td>
+                  <td data-row="9" data-col="2"></td>
+                  <td data-row="9" data-col="3"></td>
+                  <td data-row="9" data-col="4">0.743</td>
+                  <td data-row="9" data-col="5"></td>
+                  <td data-row="9" data-col="6">0.545</td>
+                </tr>
+                <tr>
+                  <td data-row="10" data-col="1"></td>
+                  <td data-row="10" data-col="2"></td>
+                  <td data-row="10" data-col="3"></td>
+                  <td data-row="10" data-col="4">(0.036)</td>
+                  <td data-row="10" data-col="5"></td>
+                  <td data-row="10" data-col="6">(0.039)</td>
+                </tr>
+                <tr>
+                  <td data-row="11" data-col="1">sexMale</td>
+                  <td data-row="11" data-col="2"></td>
+                  <td data-row="11" data-col="3"></td>
+                  <td data-row="11" data-col="4"></td>
+                  <td data-row="11" data-col="5">-0.274</td>
+                  <td data-row="11" data-col="6">-0.143</td>
+                </tr>
+                <tr>
+                  <td data-row="12" data-col="1"></td>
+                  <td data-row="12" data-col="2"></td>
+                  <td data-row="12" data-col="3"></td>
+                  <td data-row="12" data-col="4"></td>
+                  <td data-row="12" data-col="5">(0.041)</td>
+                  <td data-row="12" data-col="6">(0.039)</td>
+                </tr>
+                <tr>
+                  <td data-row="13" data-col="1">Num.Obs.</td>
+                  <td data-row="13" data-col="2">1000</td>
+                  <td data-row="13" data-col="3">1000</td>
+                  <td data-row="13" data-col="4">1000</td>
+                  <td data-row="13" data-col="5">1000</td>
+                  <td data-row="13" data-col="6">1000</td>
+                </tr>
+                <tr>
+                  <td data-row="14" data-col="1">R2</td>
+                  <td data-row="14" data-col="2">0.212</td>
+                  <td data-row="14" data-col="3">0.212</td>
+                  <td data-row="14" data-col="4">0.295</td>
+                  <td data-row="14" data-col="5">0.245</td>
+                  <td data-row="14" data-col="6">0.367</td>
+                </tr>
+                <tr>
+                  <td data-row="15" data-col="1">R2 Adj.</td>
+                  <td data-row="15" data-col="2">0.211</td>
+                  <td data-row="15" data-col="3">0.211</td>
+                  <td data-row="15" data-col="4">0.295</td>
+                  <td data-row="15" data-col="5">0.243</td>
+                  <td data-row="15" data-col="6">0.365</td>
+                </tr>
+                <tr>
+                  <td data-row="16" data-col="1">AIC</td>
+                  <td data-row="16" data-col="2">2004.8</td>
+                  <td data-row="16" data-col="3">2006.4</td>
+                  <td data-row="16" data-col="4">1893.0</td>
+                  <td data-row="16" data-col="5">1963.8</td>
+                  <td data-row="16" data-col="6">1790.2</td>
+                </tr>
+                <tr>
+                  <td data-row="17" data-col="1">BIC</td>
+                  <td data-row="17" data-col="2">2019.5</td>
+                  <td data-row="17" data-col="3">2026.0</td>
+                  <td data-row="17" data-col="4">1907.7</td>
+                  <td data-row="17" data-col="5">1983.4</td>
+                  <td data-row="17" data-col="6">1814.8</td>
+                </tr>
+                <tr>
+                  <td data-row="18" data-col="1">Log.Lik.</td>
+                  <td data-row="18" data-col="2">-999.382</td>
+                  <td data-row="18" data-col="3">-999.189</td>
+                  <td data-row="18" data-col="4">-943.477</td>
+                  <td data-row="18" data-col="5">-977.904</td>
+                  <td data-row="18" data-col="6">-890.108</td>
+                </tr>
+                <tr>
+                  <td data-row="19" data-col="1">F</td>
+                  <td data-row="19" data-col="2">268.270</td>
+                  <td data-row="19" data-col="3">134.244</td>
+                  <td data-row="19" data-col="4">418.071</td>
+                  <td data-row="19" data-col="5">161.762</td>
+                  <td data-row="19" data-col="6">192.141</td>
+                </tr>
+                <tr>
+                  <td data-row="20" data-col="1">RMSE</td>
+                  <td data-row="20" data-col="2">0.66</td>
+                  <td data-row="20" data-col="3">0.66</td>
+                  <td data-row="20" data-col="4">0.62</td>
+                  <td data-row="20" data-col="5">0.64</td>
+                  <td data-row="20" data-col="6">0.59</td>
+                </tr>
+        </tbody>
+      </table>
+    </div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
 <p>…</p>
 </section>
 </section>

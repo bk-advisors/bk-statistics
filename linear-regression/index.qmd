@@ -209,11 +209,106 @@ The adjusted R-squared (which we need to look at because we’re using more than
 
 ...
 
-#### **6. Do high school GPAs predict freshman GPAs?**
+#### **6A. Do high school GPAs predict freshman GPAs?**
+
+Similar to the above in approach, but now the formula is:
+
+![](assets/linear-regression-equation-hs-fy-gpa.png)
+
+And implementing the model in R is as follows:
+
+```{r}
+model_sat_gpa_hs <- lm(gpa_fy ~ gpa_hs, data = sat_gpa)
+
+tidy(model_sat_gpa_hs)
+```
+
+-   The intercept here (Beta-0) is 0.091, which means that a student with a high school GPA of zero would have a predicted freshman GPA of 0.091, on average. This is nonsensical, so we can ignore it.
+
+-   The slope for `gpa_hs` (Beta-1), on the other hand, is helpful. For every 1 point increase in GPA (i.e. moving from 2.0 to 3.0, or 3.0 to 4.0), there’s an associated increase in college GPA of 0.743 points, on average.
+
+**Checking the R-squared, for this model:**
+
+```{r}
+glance(model_sat_gpa_hs)
+```
+
+-   The R-squared value is 0.295, which means that nearly 30% of the variation in college GPA can be explained by high school GPA. Neat.
+
+#### 6B. College GPA \~ SAT + sex
+
+Next, we can see how both SAT scores and sex affect variation in college GPA with the following model:
+
+![](assets/linear-regression-equation-gpa-sat-sex.png)
+
+Implementation in R:
+
+```{r}
+model_sat_sex <- lm(gpa_fy ~ sat_total + sex, data = sat_gpa)
+
+tidy(model_sat_sex, conf.int = TRUE)
+```
+
+-   Here, stuff gets interesting. The intercept (Beta-0) is once again nonsensical—females with a 0 score on their SAT would have a -0.027 college GPA on average.
+
+-   There’s a positive effect with our Beta-1 (or `sat_total`), since controlling for sex, a one percentile point increase in SAT scores is associated with a 0.026 point increase in freshman GPA, on average.
+
+-   If we control for SAT scores, males see an average drop of 0.274 points (Beta-2) in their college GPAs.
+
+-   The combination of these two variables, however, doesn’t boost the model’s explanatory power that much.
+
+**Adjusted R-squared:**
+
+```{r}
+glance(model_sat_sex)
+```
+
+-   The adjusted R-squared (which we must look at because we’re using more than one explanatory variable) is 0.243, meaning that the model explains a little over 24% of the variation in college GPAs.
+
+#### **6C. College GPA \~ SAT + high school GPA + sex**
+
+Finally we can see what the effect of SAT scores, high school GPA, and sex is on college GPAs all at the same time, using the following model:
+
+![](assets/linear-regression-equation-gpa-sat-hs-gpa-sex.png)
+
+Implementation in R:
+
+```{r}
+model_sat_hs_sex <- lm(gpa_fy ~ sat_total + gpa_hs + sex, data = sat_gpa)
+
+tidy(model_sat_hs_sex, conf.int = TRUE)
+```
+
+-   Yet again, the intercept (Beta-0) can be safely ignored. Here it means that a female with a 0.0 high school GPA and an SAT score of 0 would have a college GPA of -0.84, on average. That’s pretty impossible.
+
+-   The Beta-1 coefficient for `sat_total` indicates that taking into account high school GPA and sex, a one percentile point increase in a student’s SAT score is associated with a 0.016 point increase in their college GPA, on average.
+
+-   Controlling for SAT scores and sex, a one point increase in high school GPA is associated with a 0.545 point (this is Beta-2) increase in college GPA, on average. This coefficient is lower than the 0.74 point coefficient we found previously. That’s because SAT scores and sex soaked up some of high school GPA’s explanatory power.
+
+-   Taking SAT scores and high school GPAs into account, males have a 0.143 point lower GPA in college, on average (this is Beta-3 )
+
+**Adjusted R-squared:**
+
+```{r}
+glance(model_sat_hs_sex)
+```
+
+-   As always, the adjusted  shows us how well the model fits overall (again, we have to look at the adjusted  because we have more than one explanatory variable). In this case, the model explains 36.5% of the variation in college GPA, which is higher than any of the previous models (but not phenomenal, in the end).
 
 ...
 
 #### **7. Which model best predicts freshman GPA? How do you know?**
+
+As you’ve learned in previous stats classes, adjusted  generally shows the strength of a model’s fit, or how well the model will predict future values of the outcome variable. If we compare the adjusted  for each of the models, we see that the “best” model is the last one.
+
+```{r}
+# The modelsummary() function takes a bunch of different regression models and
+# puts them in a neat side-by-side table. In a normal report or analysis, you'd
+# include all of these once instead of going one by one like we did above.
+
+modelsummary(list(model_sat_gpa, model_sat_gpa_types, model_sat_gpa_hs, 
+                  model_sat_sex, model_sat_hs_sex))
+```
 
 ...
 
